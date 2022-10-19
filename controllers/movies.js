@@ -24,7 +24,7 @@ const createMovie = async (req, res, next) => {
       year,
       description,
       image,
-      trailer,
+      trailerLink,
       thumbnail,
       nameRU,
       nameEN,
@@ -39,7 +39,7 @@ const createMovie = async (req, res, next) => {
         year,
         description,
         image,
-        trailer,
+        trailerLink,
         thumbnail,
         nameRU,
         nameEN,
@@ -59,14 +59,14 @@ const deleteMovie = async (req, res, next) => {
   const { movieId } = req.params;
   const userId = req.user._id;
   try {
-    const card = await Movie.findById(movieId);
-    if (!card) {
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
       return next(new NotFound('Фильм не существует'));
-    } if (userId !== card.owner.toString()) {
-      return next(Forbidden('Нет прав на удаление фильма'));
+    } if (userId !== movie.owner.toString()) {
+      return next(new Forbidden('Нет прав на удаление фильма'));
     }
     await Movie.findByIdAndDelete(movieId);
-    return res.status(200).send(card);
+    return res.status(200).send(movie);
   } catch (err) {
     if ((err.kind === 'ObjectID')) {
       return next(new BadRequest('Ошибка в запросе'));

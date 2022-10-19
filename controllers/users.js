@@ -39,6 +39,9 @@ const updateUserInfo = async (req, res, next) => {
     if (err.name === 'ValidationError') {
       return next(new BadRequest('Ошибка в запросе'));
     }
+    if (err.code === 11000) {
+      return next(new Conflict('Пользователь с таким email уже зарегистрирован'));
+    }
     return next(new InternalServerError('Произошла ошибка на сервере'));
   }
 };

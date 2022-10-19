@@ -2,22 +2,18 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const { celebrate, Joi, errors } = require('celebrate');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-
-const { PORT = 3000 } = process.env;
-
-const { userRoutes } = require('./routes/users');
-const { movieRoutes } = require('./routes/movies');
-
-const { createUser, login, logout } = require('./controllers/users');
-
-const { auth } = require('./middlewares/auth');
+const { errors } = require('celebrate');
+const helmet = require('helmet');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const router = require('./routes/index');
+const { errorsHandler } = require('./middlewares/errorsHandler');
+const NotFound = require('./errors/NotFound');
 
-const BadRequest = require('./errors/BadRequest');
+const { NODE_ENV, MONGO_DB } = process.env;
+const { PORT = 3000 } = process.env;
 
 const app = express();
 
@@ -32,56 +28,28 @@ app.use(express.json());
 
 app.use(requestLogger);
 
+app.use(helmet());
+
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), login);
-
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), createUser);
-
-app.get('/logout', logout);
-
-app.use(auth);
-
-app.use('/users', userRoutes);
-
-app.use('/movies', movieRoutes);
+app.use('*', (req, res, next) => {
+  next(new NotFound('Страница не найдена'));
+});
 
 app.use(errorLogger);
 
+app.use('/', router);
+
 app.use(errors());
 
-app.use('*', (req, res, next) => {
-  next(new BadRequest('Страница не найдена'));
-});
-
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-
-  res.status(statusCode).send({
-    message: statusCode === 500
-      ? 'На сервере произошла ошибка'
-      : message,
-  });
-  next();
-});
+app.use(errorsHandler);
 
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+  await mongoose.connect(NODE_ENV === 'production' ? MONGO_DB : 'mongodb://localhost:27017/moviesdb', {
     useNewUrlParser: true,
     useUnifiedTopology: false,
   });

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const movieSchema = new mongoose.Schema({
-  contry: {
+  country: {
     type: String,
     required: true,
   },
@@ -24,9 +25,7 @@ const movieSchema = new mongoose.Schema({
   image: {
     type: String,
     validate: {
-      validator(v) {
-        return /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(v);
-      },
+      validator: (v) => validator.isURL(v),
       message: 'link is not valid',
     },
   },
@@ -34,9 +33,7 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(v) {
-        return /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(v);
-      },
+      validator: (v) => validator.isURL(v),
       message: 'link is not valid',
     },
   },
@@ -44,9 +41,7 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(v) {
-        return /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(v);
-      },
+      validator: (v) => validator.isURL(v),
       message: 'link is not valid',
     },
   },
@@ -59,7 +54,7 @@ const movieSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  nameRu: {
+  nameRU: {
     type: String,
     required: true,
   },

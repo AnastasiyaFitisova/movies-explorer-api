@@ -15,8 +15,8 @@ const auth = (req, res, next) => {
   } catch (error) {
     next(new Unauthorized('Необходима авторизация'));
   }
-  req.users = payload;
+  req.user = payload;
   next();
 };
 
-module.exports = { auth };
+module.exports = auth;

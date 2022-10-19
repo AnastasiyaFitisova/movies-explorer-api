@@ -74,7 +74,7 @@ const login = async (req, res, next) => {
     if (!user) {
       return next(new Unauthorized('Неправильные почта или пароль'));
     }
-    const passwordIsValid = bcrypt.compare(password, user.password);
+    const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
       return next(new Unauthorized('Неправильные почта или пароль'));
     }

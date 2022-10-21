@@ -10,10 +10,11 @@ const helmet = require('helmet');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
 const { errorsHandler } = require('./middlewares/errorsHandler');
-const NotFound = require('./errors/NotFound');
 
-const { NODE_ENV, MONGO_DB } = process.env;
-const { PORT = 3000 } = process.env;
+const {
+  PORT = 3000,
+  MONGO_DB = 'mongodb://localhost:27017/moviesdb',
+} = process.env;
 
 const app = express();
 
@@ -22,13 +23,21 @@ app.use(cors({
   credentials: true,
 }));
 
-app.use(cookieParser());
-
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.use(requestLogger);
 
 app.use(helmet());
+
+app.use('/', router);
+
+app.use(errorLogger);
+
+app.use(errors());
+
+app.use(errorsHandler);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -36,20 +45,8 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use('*', (req, res, next) => {
-  next(new NotFound('Страница не найдена'));
-});
-
-app.use(errorLogger);
-
-app.use('/', router);
-
-app.use(errors());
-
-app.use(errorsHandler);
-
 async function main() {
-  await mongoose.connect(NODE_ENV === 'production' ? MONGO_DB : 'mongodb://localhost:27017/moviesdb', {
+  await mongoose.connect(MONGO_DB, {
     useNewUrlParser: true,
     useUnifiedTopology: false,
   });

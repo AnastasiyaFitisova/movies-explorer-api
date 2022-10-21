@@ -12,6 +12,6 @@ movieRoutes.get('/', getMovies); // возвращает все сохранён
 
 movieRoutes.post('/', validationOfCreateMovies, createMovie); // cоздаёт фильм с переданными в теле данными
 
-movieRoutes.delete('/:_id ', validationOfDeleteMovie, deleteMovie); // удаляет сохранённый фильм по id
+movieRoutes.delete('/:movieId', validationOfDeleteMovie, deleteMovie); // удаляет сохранённый фильм по id
 
 module.exports = movieRoutes;

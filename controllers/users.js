@@ -85,8 +85,8 @@ const login = async (req, res, next) => {
     );
     res.cookie('jwt', token, {
       httpOnly: true,
-      sameSite: 'none',
       secure: true,
+      sameSite: 'None',
     });
     return res.status(200).send(user.toJSON());
   } catch (err) {

@@ -6,8 +6,9 @@ const NotFound = require('../errors/NotFound');
 const Forbidden = require('../errors/Forbidden');
 
 const getMovies = async (req, res, next) => {
+  const owner = req.user._id;
   try {
-    const cards = await Movie.find({});
+    const cards = await Movie.find({owner});
     return res.status(200).send(cards);
   } catch (err) {
     return next(new InternalServerError('Произошла ошибка на сервере'));

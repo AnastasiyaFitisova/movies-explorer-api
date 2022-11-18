@@ -12,14 +12,14 @@ const router = require('./routes/index');
 const { errorsHandler } = require('./middlewares/errorsHandler');
 
 const {
-  PORT = 3000,
+  PORT = 4000,
   MONGO_DB = 'mongodb://localhost:27017/moviesdb',
 } = process.env;
 
 const app = express();
 
 app.use(cors({
-  origin: [],
+  origin: ['https://afitis.nomoredomains.icu', 'https://afitis.nomoredomains.icu'],
   credentials: true,
 }));
 

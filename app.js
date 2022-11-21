@@ -19,7 +19,7 @@ const {
 const app = express();
 
 app.use(cors({
-  origin: ['https://afitis.nomoredomains.icu', 'https://afitis.nomoredomains.icu'],
+  origin: ['http://localhost:3000'],
   credentials: true,
 }));
 
